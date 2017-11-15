@@ -6,6 +6,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.repository.mock.InMemoryMealRepositoryImpl;
+import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.service.MealServiceImpl;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
@@ -27,7 +30,9 @@ public class MealServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-
+        /*
+        controller = new MealRestController(new MealServiceImpl(new InMemoryMealRepositoryImpl()));
+        */
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
             controller = appCtx.getBean(MealRestController.class);
         }
