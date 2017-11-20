@@ -13,7 +13,9 @@ import ru.javawebinar.topjava.repository.MealRepository;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class JdbcMealRepositoryImpl implements MealRepository {
@@ -57,7 +59,7 @@ public class JdbcMealRepositoryImpl implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        return jdbcTemplate.update("DELETE FROM topjava.public.meals WHERE id=? id AND userId=?, userId")!=0;
+        return jdbcTemplate.update("DELETE FROM topjava.public.meals WHERE id=? AND userId=?", id, userId)!=0;
     }
 
     @Override
@@ -68,12 +70,13 @@ public class JdbcMealRepositoryImpl implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        return jdbcTemplate.query("SELECT * FROM topjava.public.meals WHERE user_id=?, user_id ORDER BY description, calories", ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM topjava.public.meals WHERE user_id=? ORDER BY description, calories", ROW_MAPPER, userId)
+                .stream().sorted(Comparator.comparing(Meal::getDateTime)).collect(Collectors.toList());
     }
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        //return getAll().stream().filter();
-        return null;
+        return getAll(userId);
+        //return null;
     }
 }
