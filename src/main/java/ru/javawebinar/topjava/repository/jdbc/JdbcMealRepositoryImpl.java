@@ -42,6 +42,7 @@ public class JdbcMealRepositoryImpl implements MealRepository {
     public Meal save(Meal meal, int userId) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
                 .addValue("id", meal.getId())
+                .addValue("userId", userId)
                 .addValue("dateTime", meal.getDateTime())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories());
@@ -51,15 +52,15 @@ public class JdbcMealRepositoryImpl implements MealRepository {
             meal.setId(newKey.intValue());
         } else {
             namedParameterJdbcTemplate.update(
-                    "UPDATE topjava.public.meals SET user_id=:user_id, date_time=:date_time, description=:description, " +
-                            "calories=:calories, WHERE id=:id", mapSqlParameterSource);
+                    "UPDATE topjava.public.meals SET user_id=:userId, date_time=:dateTime, description=:description, " +
+                            "calories=:calories WHERE id=:id", mapSqlParameterSource);
         }
         return meal;
     }
 
     @Override
     public boolean delete(int id, int userId) {
-        return jdbcTemplate.update("DELETE FROM topjava.public.meals WHERE id=? AND userId=?", id, userId)!=0;
+        return jdbcTemplate.update("DELETE FROM topjava.public.meals WHERE id=? AND user_id=?", id, userId)!=0;
     }
 
     @Override
@@ -76,7 +77,9 @@ public class JdbcMealRepositoryImpl implements MealRepository {
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        return getAll(userId);
+        return jdbcTemplate.query("SELECT * FROM topjava.public.meals WHERE user_id=? ORDER BY description, calories", ROW_MAPPER, userId)
+                .stream().sorted(Comparator.comparing(Meal::getDateTime)).collect(Collectors.toList());
+        //return getAll(userId);
         //return null;
     }
 }
