@@ -14,11 +14,8 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
 
     @Autowired
     private CrudMealRepository crudRepository;
+    @Autowired
     private CrudUserRepository crudUserRepository;
-
-    public DataJpaMealRepositoryImpl(CrudUserRepository crudUserRepository) {
-        this.crudUserRepository = crudUserRepository;
-    }
 
     @Override
     public Meal save(Meal meal, int userId) {
