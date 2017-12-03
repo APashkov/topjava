@@ -11,6 +11,7 @@ import java.util.List;
 
 @Repository
 public class DataJpaMealRepositoryImpl implements MealRepository {
+    private static final Sort SORT_DATE = new Sort(Sort.Direction.DESC, "dateTime");
 
     @Autowired
     private CrudMealRepository crudRepository;
